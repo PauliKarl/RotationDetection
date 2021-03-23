@@ -153,8 +153,8 @@ __device__ inline bool inrect(float pt_x, float pt_y, float * pts) {
   abap = ab[0] * ap[0] + ab[1] * ap[1];
   adad = ad[0] * ad[0] + ad[1] * ad[1];
   adap = ad[0] * ap[0] + ad[1] * ap[1];
-  bool result = (abab - abap >=  -1) and (abap >= -1) and (adad - adap >= -1) and (adap >= -1);
-  // bool result = (abab >= abap) and (abap >= 0) and (adad >= adap) and (adap >= 0);
+  bool result = (abab - abap >=  -1) && (abap >= -1) && (adad - adap >= -1) && (adap >= -1);
+  // bool result = (abab >= abap) && (abap >= 0) && (adad >= adap) && (adap >= 0);
   return result;
 }
 

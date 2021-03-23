@@ -1530,7 +1530,7 @@ static PyObject *__pyx_pw_14rbbox_overlaps_1rbbx_overlaps(PyObject *__pyx_self, 
     if (values[2]) {
       __pyx_v_device_id = __Pyx_PyInt_As_npy_int32(values[2]); if (unlikely((__pyx_v_device_id == ((npy_int32)-1)) && PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
     } else {
-      __pyx_v_device_id = ((__pyx_t_5numpy_int32_t)0);
+      __pyx_v_device_id = ((int32_t)0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;

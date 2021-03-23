@@ -28,7 +28,7 @@ class TrainRetinaNet(Train):
     def main(self):
         with tf.Graph().as_default() as graph, tf.device('/cpu:0'):
 
-            num_gpu = len(cfgs.GPU_GROUP.strip().split(','))
+            num_gpu = 1
             global_step = slim.get_or_create_global_step()
             lr = self.warmup_lr(cfgs.LR, global_step, cfgs.WARM_SETP, num_gpu)
             tf.summary.scalar('lr', lr)
@@ -44,7 +44,6 @@ class TrainRetinaNet(Train):
 
                 else:
                     shortside_len = cfgs.IMG_SHORT_SIDE_LEN
-
                 img_name_batch, img_batch, gtboxes_and_label_batch, num_objects_batch, img_h_batch, img_w_batch = \
                     self.reader.next_batch(dataset_name=cfgs.DATASET_NAME,
                                            batch_size=cfgs.BATCH_SIZE * num_gpu,

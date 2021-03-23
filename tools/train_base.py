@@ -192,6 +192,7 @@ class Train(object):
             sess.run(init_op)
 
             # sess.run(tf.initialize_all_variables())
+            tf.local_variables_initializer().run()
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord, sess=sess)
 

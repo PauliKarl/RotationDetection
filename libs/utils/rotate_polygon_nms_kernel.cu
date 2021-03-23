@@ -153,7 +153,7 @@ __device__ inline bool in_rect(float pt_x, float pt_y, float * pts) {
   adad = ad[0] * ad[0] + ad[1] * ad[1];
   adap = ad[0] * ap[0] + ad[1] * ap[1];
 
-  return abab >= abap and abap >= 0 and adad >= adap and adap >= 0;
+  return abab >= abap && abap >= 0 && adad >= adap && adap >= 0;
 }
 
 __device__ inline int inter_pts(float * pts1, float * pts2, float * int_pts) {

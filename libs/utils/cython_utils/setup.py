@@ -12,6 +12,10 @@ from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
+nvcc_bin = 'nvcc.exe'#added for wins
+lib_dir = 'lib/x64'#added for wins
+
+
 def find_in_path(name, path):
     "Find a file in a search path"
     #adapted fom http://code.activestate.com/recipes/52224-find-a-file-given-a-search-path/
@@ -34,19 +38,26 @@ def locate_cuda():
     # first check if the CUDAHOME env variable is in use
     if 'CUDAHOME' in os.environ:
         home = os.environ['CUDAHOME']
-        nvcc = pjoin(home, 'bin', 'nvcc')
+        # nvcc = pjoin(home, 'bin', 'nvcc')#deleted for wins
+        nvcc = pjoin(home,'bin', nvcc_bin)#added for wins
     else:
         # otherwise, search the PATH for NVCC
         default_path = pjoin(os.sep, 'usr', 'local', 'cuda', 'bin')
-        nvcc = find_in_path('nvcc', os.environ['PATH'] + os.pathsep + default_path)
+        # nvcc = find_in_path('nvcc', os.environ['PATH'] + os.pathsep + default_path)#deleted for wins
+        nvcc = find_in_path(nvcc_bin, os.environ['PATH'] + os.pathsep + default_path)#added for wins
         if nvcc is None:
             raise EnvironmentError('The nvcc binary could not be '
                 'located in your $PATH. Either add it to your path, or set $CUDAHOME')
         home = os.path.dirname(os.path.dirname(nvcc))
-
+    #####deleted for wins#####################
+    # cudaconfig = {'home':home, 'nvcc':nvcc,
+    #               'include': pjoin(home, 'include'),
+    #               'lib64': pjoin(home, 'lib64')}
+    
+    #####added for wins#####################
     cudaconfig = {'home':home, 'nvcc':nvcc,
                   'include': pjoin(home, 'include'),
-                  'lib64': pjoin(home, 'lib64')}
+                  'lib64': pjoin(home, lib_dir)}
     for k, v in cudaconfig.items():
         if not os.path.exists(v):
             raise EnvironmentError('The CUDA %s path could not be located in %s' % (k, v))
@@ -71,10 +82,10 @@ def customize_compiler_for_nvcc(self):
     subclassing going on."""
 
     # tell the compiler it can processes .cu
-    self.src_extensions.append('.cu')
+    # self.src_extensions.append('.cu')#deleted for wins
 
-    # save references to the default compiler_so and _comple methods
-    default_compiler_so = self.compiler_so
+    # # save references to the default compiler_so and _comple methods
+    # default_compiler_so = self.compiler_so#deleted for wins
     super = self._compile
 
     # now redefine the _compile method. This gets executed for each
@@ -84,16 +95,17 @@ def customize_compiler_for_nvcc(self):
         print(extra_postargs)
         if os.path.splitext(src)[1] == '.cu':
             # use the cuda for .cu files
-            self.set_executable('compiler_so', CUDA['nvcc'])
+            # self.set_executable('compiler_so', CUDA['nvcc']) #deleted for wins
             # use only a subset of the extra_postargs, which are 1-1 translated
             # from the extra_compile_args in the Extension class
             postargs = extra_postargs['nvcc']
         else:
             postargs = extra_postargs['gcc']
 
-        super(obj, src, ext, cc_args, postargs, pp_opts)
-        # reset the default compiler_so, which we might have changed for cuda
-        self.compiler_so = default_compiler_so
+        # super(obj, src, ext, cc_args, postargs, pp_opts) #deleted for wins
+        # #reset the default compiler_so, which we might have changed for cuda
+        # self.compiler_so = default_compiler_so#deleted for wins
+        return super(obj, src, ext, cc_args, postargs, pp_opts) #added for wins
 
     # inject our redefined _compile method into the class
     self._compile = _compile
