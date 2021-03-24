@@ -27,10 +27,8 @@ def find_in_path(name, path):
 
 def locate_cuda():
     """Locate the CUDA environment on the system
-
     Returns a dict with keys 'home', 'nvcc', 'include', and 'lib64'
     and values giving the absolute path to each directory.
-
     Starts by looking for the CUDAHOME env variable. If not found, everything
     is based on finding 'nvcc' in the PATH.
     """
@@ -69,7 +67,6 @@ except AttributeError:
 def customize_compiler_for_nvcc(self):
     """inject deep into distutils to customize how the dispatch
     to gcc/nvcc works.
-
     If you subclass UnixCCompiler, it's not trivial to get your subclass
     injected in, and still have the right customizations (i.e.
     distutils.sysconfig.customize_compiler) run on it. So instead of going
