@@ -2,23 +2,25 @@
 from __future__ import division, print_function, absolute_import
 
 
-class_names = [
-        'back_ground', 'person', 'bicycle', 'car', 'motorcycle',
-        'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
-        'fire hydrant', 'stop sign', 'parking meter', 'bench',
-        'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant',
-        'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-        'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-        'sports ball', 'kite', 'baseball bat', 'baseball glove',
-        'skateboard', 'surfboard', 'tennis racket', 'bottle',
-        'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
-        'banana', 'apple', 'sandwich', 'orange', 'broccoli',
-        'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-        'couch', 'potted plant', 'bed', 'dining table', 'toilet',
-        'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
-        'microwave', 'oven', 'toaster', 'sink', 'refrigerator',
-        'book', 'clock', 'vase', 'scissors', 'teddy bear',
-        'hair drier', 'toothbrush']
+# class_names = [
+#         'back_ground', 'person', 'bicycle', 'car', 'motorcycle',
+#         'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+#         'fire hydrant', 'stop sign', 'parking meter', 'bench',
+#         'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant',
+#         'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
+#         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+#         'sports ball', 'kite', 'baseball bat', 'baseball glove',
+#         'skateboard', 'surfboard', 'tennis racket', 'bottle',
+#         'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
+#         'banana', 'apple', 'sandwich', 'orange', 'broccoli',
+#         'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
+#         'couch', 'potted plant', 'bed', 'dining table', 'toilet',
+#         'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
+#         'microwave', 'oven', 'toaster', 'sink', 'refrigerator',
+#         'book', 'clock', 'vase', 'scissors', 'teddy bear',
+#         'hair drier', 'toothbrush']
+
+class_names = ['ship']
 
 classes_originID = {
     'person': 1, 'bicycle': 2, 'car': 3, 'motorcycle': 4,
@@ -135,9 +137,10 @@ class LabelMap(object):
             if self.cfgs.DATASET_NAME == 'DOTA1.5':
                 name_label_map['container-crane'] = 16
             if self.cfgs.DATASET_NAME == 'DOTA2.0':
-                name_label_map['container-crane'] = 16
-                name_label_map['airport'] = 17
-                name_label_map['helipad'] = 18
+                name_label_map['ship']=1
+                # name_label_map['container-crane'] = 16
+                # name_label_map['airport'] = 17
+                # name_label_map['helipad'] = 18
 
         elif self.cfgs.DATASET_NAME == 'coco':
             name_label_map = self.coco_name2abel()

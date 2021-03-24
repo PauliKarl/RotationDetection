@@ -8,33 +8,33 @@ from dataloader.pretrained_weights.pretrain_zoo import PretrainModelZoo
 
 """
 RetinaNet-H + 90
-FLOPs: 862193617;    Trainable params: 33051321
+FLOPs: 1054755172;    Trainable params: 33148131
 This is your evaluation result for task 1:
 
-mAP: 0.5887471058289246
-ap of each class: plane:0.7849039138235574, baseball-diamond:0.7217680640990516, bridge:0.394302700294054, ground-track-field:0.622515144946226, small-vehicle:0.47130444935356086, large-vehicle:0.4864076567136256, ship:0.7364028142317903, tennis-court:0.8965332860918587, basketball-court:0.7527122732520811, storage-tank:0.5898721957198321, soccer-ball-field:0.49463409572934963, roundabout:0.6811650594270172, harbor:0.5194446376124553, swimming-pool:0.6394792338041666, helicopter:0.5323204848797101, container-crane:0.09618768328445748
+mAP: 0.44156413432908415
+ap of each class: plane:0.7402191062015364, baseball-diamond:0.4645792974915081, bridge:0.37647950023482696, ground-track-field:0.5743651999375883, small-vehicle:0.34562693622352575, large-vehicle:0.3502289061536839, ship:0.4695205209241055, tennis-court:0.7745719743717583, basketball-court:0.520493288779417, storage-tank:0.5391885348848654, soccer-ball-field:0.38803472572261355, roundabout:0.48309476020235276, harbor:0.34558533749052234, swimming-pool:0.5074362374340297, helicopter:0.4550923397013484, container-crane:0.10480495563368492, airport:0.4222649434676708, helipad:0.08656785306847574
 The submitted information is :
 
-Description: RetinaNet_DOTA1.5_2x_20210314_83.2w
-Username: AICyber
-Institute: IECAS
-Emailadress: yangxue16@mails.ucas.ac.cn
-TeamMembers: Yang Xue; Yang Jirui
+Description: RetinaNet_DOTA2.0_2x_20210314_104w (retinanet baseline, https://github.com/yangxue0827/RotationDetection)
+Username: sjtu-deter
+Institute: SJTU
+Emailadress: yangxue-2019-sjtu@sjtu.edu.cn
+TeamMembers: yangxue
 """
 
 # ------------------------------------------------
-VERSION = 'RetinaNet_DOTA1.5_2x_20210314'
-NET_NAME = 'resnet50_v1d'  # 'MobilenetV2'
+VERSION = 'RetinaNet_DOTA2.0_2x_20210314'
+NET_NAME = 'resnet_v1_50'  # 'MobilenetV2'
 
 # ---------------------------------------- System
 ROOT_PATH = os.path.abspath('../../')
 print(20*"++--")
 print(ROOT_PATH)
-GPU_GROUP = "0,1,2"
-NUM_GPU = len(GPU_GROUP.strip().split(','))
+GPU_GROUP = "0"
+NUM_GPU = 1#len(GPU_GROUP.strip().split(','))
 SHOW_TRAIN_INFO_INTE = 20
 SMRY_ITER = 200
-SAVE_WEIGHTS_INTE = 32000 * 2
+SAVE_WEIGHTS_INTE = 40000 * 2
 
 SUMMARY_PATH = os.path.join(ROOT_PATH, 'output/summary')
 TEST_SAVE_PATH = os.path.join(ROOT_PATH, 'tools/test_result')
@@ -69,13 +69,13 @@ MAX_ITERATION = SAVE_WEIGHTS_INTE*20
 WARM_SETP = int(1.0 / 4.0 * SAVE_WEIGHTS_INTE)
 
 # -------------------------------------------- Dataset
-DATASET_NAME = 'DOTA1.5'  # 'pascal', 'coco'
+DATASET_NAME = 'DOTA2.0'  # 'pascal', 'coco'
 PIXEL_MEAN = [123.68, 116.779, 103.939]  # R, G, B. In tf, channel is RGB. In openCV, channel is BGR
 PIXEL_MEAN_ = [0.485, 0.456, 0.406]
 PIXEL_STD = [0.229, 0.224, 0.225]  # R, G, B. In tf, channel is RGB. In openCV, channel is BGR
 IMG_SHORT_SIDE_LEN = 800
 IMG_MAX_LENGTH = 800
-CLASS_NUM = 16
+CLASS_NUM = 1
 
 IMG_ROTATE = False
 RGB2GRAY = False
@@ -103,7 +103,7 @@ ANCHOR_RATIOS = [1, 1 / 2, 2., 1 / 3., 3., 5., 1 / 5.]
 ANCHOR_ANGLES = [-90, -75, -60, -45, -30, -15]
 ANCHOR_SCALE_FACTORS = None
 USE_CENTER_OFFSET = True
-METHOD = 'H'
+METHOD = 'R'
 USE_ANGLE_COND = False
 ANGLE_RANGE = 90  # or 180
 

@@ -40,14 +40,14 @@ class ReadTFRecord(object):
         img_name = features['img_name']
         img_height = tf.cast(features['img_height'], tf.int32)
         img_width = tf.cast(features['img_width'], tf.int32)
-        img = tf.decode_raw(features['img'], tf.uint8)
+        img = tf.decode_raw(features['img'], tf.int32)
 
         img = tf.reshape(img, shape=[img_height, img_width, 3])
-
-        gtboxes_and_label = tf.decode_raw(features['gtboxes_and_label'], tf.int32)
-        gtboxes_and_label = tf.reshape(gtboxes_and_label, [-1, 9])
-
         num_objects = tf.cast(features['num_objects'], tf.int32)
+        gtboxes_and_label = tf.decode_raw(features['gtboxes_and_label'], tf.int32)
+
+        gt_shape = tf.stack([num_objects,9])
+        gtboxes_and_label = tf.reshape(gtboxes_and_label, gt_shape)
         return img_name, img, gtboxes_and_label, num_objects
 
     def read_and_prepocess_single_img(self, filename_queue, shortside_len, is_training):
@@ -106,11 +106,14 @@ class ReadTFRecord(object):
             raise ValueError('dataSet name must be in {}'.format(valid_dataset))
 
         if is_training:
-            pattern = os.path.join('../../dataloader/tfrecord', dataset_name + ('_train*' if 'MLT' not in dataset_name else '_*'))
+            pattern = os.path.join('F:/PauliKarl/tfrecord', dataset_name + ('_train*' if 'MLT' not in dataset_name else '_*'))
         else:
             pattern = os.path.join('../../dataloader/tfrecord', dataset_name + '_test*')
 
         print('tfrecord path is -->', os.path.abspath(pattern))
+
+        #wins下的路径问题
+        pattern = 'F:/PauliKarl/tfrecord/DOTA2.0_train.tfrecord'
 
         filename_tensorlist = tf.train.match_filenames_once(pattern)
 
@@ -123,15 +126,15 @@ class ReadTFRecord(object):
             tf.train.batch(
                            [img_name, img, gtboxes_and_label, num_obs, img_h, img_w],
                            batch_size=batch_size,
-                           capacity=16,
-                           num_threads=16,
+                           capacity=8,
+                           num_threads=8,
                            dynamic_pad=True)
 
         return img_name_batch, img_batch, gtboxes_and_label_batch, num_obs_batch, img_h_batch, img_w_batch
 
 
 if __name__ == '__main__':
-    os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
     from libs.configs import cfgs
     reader = ReadTFRecord(cfgs)
     num_gpu = len(cfgs.GPU_GROUP.strip().split(','))
@@ -151,11 +154,11 @@ if __name__ == '__main__':
     config.gpu_options.allow_growth = True
 
     with tf.Session(config=config) as sess:
-        sess.run(init_op)
+        
 
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess, coord)
-
+        sess.run(init_op)
         img_name_batch_, img_batch_, gtboxes_and_label_batch_, num_objects_batch_, img_h_batch_, img_w_batch_ \
             = sess.run([img_name_batch, img_batch, gtboxes_and_label_batch, num_objects_batch, img_h_batch, img_w_batch])
 
