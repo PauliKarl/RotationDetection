@@ -16,9 +16,9 @@ sys.path.append('../../')
 # from utils.tools import makedirs, view_bar
 # from libs.configs import cfgs
 
-tf.app.flags.DEFINE_string('VOC_dir', 'F:/data/gf2_v2/trainval/dota/', 'Voc dir')
-tf.app.flags.DEFINE_string('xml_dir', 'sublabel', 'xml dir')
-tf.app.flags.DEFINE_string('image_dir', 'subimg', 'image dir')
+tf.app.flags.DEFINE_string('VOC_dir', '/data/pd/shipdet/v1/trainval/', 'Voc dir')
+tf.app.flags.DEFINE_string('xml_dir', 'labels', 'xml dir')
+tf.app.flags.DEFINE_string('image_dir', 'images', 'image dir')
 tf.app.flags.DEFINE_string('save_name', 'train', 'save name')
 tf.app.flags.DEFINE_string('save_dir', '../tfrecord/', 'save name')
 tf.app.flags.DEFINE_string('img_format', '.png', 'format of image')
@@ -105,12 +105,15 @@ def convert_pascal_to_tfrecord():
             gtbox_label=[0,0,0,0,0,0,0,0,1]
             gtbox_label[:8]=ship['points']
             gtboxes_and_label.append(gtbox_label)
-        img_height, img_width=800,800
+        img_height, img_width=1024,1024
         gtboxes_and_label=np.array(gtboxes_and_label, dtype=np.int32)
         # if img_height != 600 or img_width != 600:
         #     continue
 
         img = cv2.imread(img_path)[:, :, ::-1]
+        cur_h,cur_w = img.shape[0],img.shape[1]
+        if 1024>cur_h or 1024>cur_w:
+            img = cv2.copyMakeBorder(img,0,1024-cur_h,0,1024-cur_w,cv2.BORDER_CONSTANT,value=0)
         img=np.array(img, dtype=np.int32)
         img_raw = img.tobytes()
         num_objects = gtboxes_and_label.shape[0]
