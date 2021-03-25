@@ -137,6 +137,7 @@ class LabelMap(object):
             if self.cfgs.DATASET_NAME == 'DOTA1.5':
                 name_label_map['container-crane'] = 16
             if self.cfgs.DATASET_NAME == 'DOTA2.0':
+                name_label_map['back_ground']=0
                 name_label_map['ship']=1
                 # name_label_map['container-crane'] = 16
                 # name_label_map['airport'] = 17
@@ -181,6 +182,11 @@ class LabelMap(object):
                 'car': 8,
                 'train': 9,
                 'rider': 10
+            }
+        elif self.cfgs.DATASET_NAME == 'sdc':
+            name_label_map = {
+                'back_ground':0,
+                'ship':1
             }
         else:
             name_label_map = {}

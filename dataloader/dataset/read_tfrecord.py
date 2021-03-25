@@ -33,8 +33,9 @@ class ReadTFRecord(object):
                 'img_height': tf.FixedLenFeature([], tf.int64),
                 'img_width': tf.FixedLenFeature([], tf.int64),
                 'img': tf.FixedLenFeature([], tf.string),
-                'gtboxes_and_label': tf.FixedLenFeature([], tf.string),
-                'num_objects': tf.FixedLenFeature([], tf.int64)
+                'num_objects': tf.FixedLenFeature([], tf.int64),
+                'gtboxes_and_label': tf.FixedLenFeature([], tf.string)
+                
             }
         )
         img_name = features['img_name']
@@ -101,19 +102,22 @@ class ReadTFRecord(object):
 
         valid_dataset= ['DOTA1.5', 'ICDAR2015', 'pascal', 'coco', 'bdd100k', 'DOTA', 'DOTA800', 'DOTA600', 'MLT',
                         'HRSC2016', 'UCAS-AOD', 'OHD-SJTU', 'OHD-SJTU-600', 'OHD-SJTU-ALL-600', 'DOTATrain', 'SSDD++',
-                        'SKU110K-R', 'SKU110K', 'MSRA-TD500', 'DOTA2.0']
+                        'SKU110K-R', 'SKU110K', 'MSRA-TD500', 'DOTA2.0','sdc']
         if dataset_name not in valid_dataset:
             raise ValueError('dataSet name must be in {}'.format(valid_dataset))
 
         if is_training:
-            pattern = os.path.join('F:/PauliKarl/tfrecord', dataset_name + ('_train*' if 'MLT' not in dataset_name else '_*'))
+            pattern = '/data2/pd/sdc/shipdet/tfrecord/{}_trainval.tfrecord'.format(dataset_name)
+            # pattern = os.path.join('F:/PauliKarl/tfrecord', dataset_name + ('_train*' if 'MLT' not in dataset_name else '_*'))
         else:
-            pattern = os.path.join('../../dataloader/tfrecord', dataset_name + '_test*')
+            pattern = '/data2/pd/sdc/shipdet/tfrecord/{}_test.tfrecord'.format(dataset_name)
+            # pattern = os.path.join('../../dataloader/tfrecord', dataset_name + '_test*')
 
-        print('tfrecord path is -->', os.path.abspath(pattern))
+        # print('tfrecord path is -->', os.path.abspath(pattern))
 
         #wins下的路径问题
-        pattern = 'F:/PauliKarl/tfrecord/DOTA2.0_train.tfrecord'
+        # pattern = '/data/pd/shipdet/tfrecord/DOTA2.0_train.tfrecord'
+        print('tfrecord path is -->', pattern)
 
         filename_tensorlist = tf.train.match_filenames_once(pattern)
 

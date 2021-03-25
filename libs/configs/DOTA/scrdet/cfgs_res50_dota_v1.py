@@ -43,7 +43,7 @@ NET_NAME = 'resnet50_v1d'
 ROOT_PATH = os.path.abspath('../../')
 print(20*"++--")
 print(ROOT_PATH)
-GPU_GROUP = "0,1,2"
+GPU_GROUP = "0"
 NUM_GPU = len(GPU_GROUP.strip().split(','))
 SHOW_TRAIN_INFO_INTE = 50
 SMRY_ITER = 200
@@ -86,13 +86,13 @@ MAX_ITERATION = SAVE_WEIGHTS_INTE*20
 WARM_SETP = int(1.0 / 4.0 * SAVE_WEIGHTS_INTE)
 
 # -------------------------------------------- Dataset
-DATASET_NAME = 'DOTA'  # 'ship', 'spacenet', 'pascal', 'coco'
+DATASET_NAME = 'DOTA2.0'  # 'ship', 'spacenet', 'pascal', 'coco'
 PIXEL_MEAN = [123.68, 116.779, 103.939]  # R, G, B. In tf, channel is RGB. In openCV, channel is BGR
 PIXEL_MEAN_ = [0.485, 0.456, 0.406]
 PIXEL_STD = [0.229, 0.224, 0.225]
-IMG_SHORT_SIDE_LEN = 800
-IMG_MAX_LENGTH = 800
-CLASS_NUM = 15
+IMG_SHORT_SIDE_LEN = 1024
+IMG_MAX_LENGTH = 1024
+CLASS_NUM = 1
 
 IMG_ROTATE = False
 RGB2GRAY = False
@@ -116,7 +116,7 @@ ANCHOR_SCALES = [0.0625, 0.125, 0.25, 0.5, 1., 2.0]
 ANCHOR_RATIOS = [0.5, 1., 2.0, 1/4.0, 4.0, 1/6.0, 6.0]
 ROI_SCALE_FACTORS = [10., 10., 5.0, 5.0, 10.0]
 ANCHOR_SCALE_FACTORS = None
-ANCHOR_MODE = 'H'
+ANCHOR_MODE = 'R'
 ANGLE_RANGE = 90
 
 

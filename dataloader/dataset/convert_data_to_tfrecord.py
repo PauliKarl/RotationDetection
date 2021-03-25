@@ -7,7 +7,7 @@ import tensorflow as tf
 import glob
 import cv2
 import os
-from pktool import rovoc_parse, thetaobb2pointobb, mkdir_or_exist,simpletxt_parse
+from pktool import rovoc_parse, thetaobb2pointobb, mkdir_or_exist,simpletxt_parse,get_files
 
 
 sys.path.append('../../')
@@ -16,13 +16,13 @@ sys.path.append('../../')
 # from utils.tools import makedirs, view_bar
 # from libs.configs import cfgs
 
-tf.app.flags.DEFINE_string('VOC_dir', '/data/pd/shipdet/v1/trainval/', 'Voc dir')
-tf.app.flags.DEFINE_string('xml_dir', 'labels', 'xml dir')
+tf.app.flags.DEFINE_string('VOC_dir', '/data/pd/shipdet/v1/', 'Voc dir')
+tf.app.flags.DEFINE_string('txt_dir', 'labels', 'xml dir')
 tf.app.flags.DEFINE_string('image_dir', 'images', 'image dir')
-tf.app.flags.DEFINE_string('save_name', 'train', 'save name')
-tf.app.flags.DEFINE_string('save_dir', '../tfrecord/', 'save name')
+# tf.app.flags.DEFINE_string('save_name', 'test', 'save name')
+tf.app.flags.DEFINE_string('save_dir', '/data2/pd/sdc/shipdet/tfrecord/', 'save name')
 tf.app.flags.DEFINE_string('img_format', '.png', 'format of image')
-tf.app.flags.DEFINE_string('dataset', 'DOTA2.0', 'dataset')
+tf.app.flags.DEFINE_string('dataset', 'sdc', 'dataset')
 FLAGS = tf.app.flags.FLAGS
 
 def int64_feature(values):
@@ -81,73 +81,73 @@ def read_xml_gtbox_and_label(xml_path):
 
 
 def convert_pascal_to_tfrecord():
-    xml_path = os.path.join(FLAGS.VOC_dir, FLAGS.xml_dir)
-    image_path = os.path.join(FLAGS.VOC_dir, FLAGS.image_dir)
-    print(image_path)
-    save_path = os.path.join(FLAGS.save_dir, FLAGS.dataset + '_' + FLAGS.save_name + '.tfrecord')
-    mkdir_or_exist(FLAGS.save_dir)
+    """convert txt (points + label format) to tfrecord
+        VOC_dir:
+            --trainval
+                --images
+                --labels
+            --test
+                --images
+                --labels
+    """
+    allNeedConvert = ['trainval','test']
+    for train_or_test in allNeedConvert:
 
-    # writer_options = tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.ZLIB)
-    # writer = tf.python_io.TFRecordWriter(path=save_path, options=writer_options)
-    writer = tf.python_io.TFRecordWriter(path=save_path)
-    for count, xml in enumerate(glob.glob(xml_path + '/*.txt')):
+        label_Path = FLAGS.VOC_dir + "{}/".format(train_or_test)+ FLAGS.txt_dir
+        image_path = FLAGS.VOC_dir + "{}/".format(train_or_test)+ FLAGS.image_dir
+        # xml_path = os.path.join(FLAGS.VOC_dir, FLAGS.xml_dir)
+        # image_path = os.path.join(FLAGS.VOC_dir, FLAGS.image_dir)
+        print(image_path)
+        save_path = os.path.join(FLAGS.save_dir, FLAGS.dataset + '_' + train_or_test + '.tfrecord')
+        mkdir_or_exist(FLAGS.save_dir)
 
-        img_name = xml.split('\\')[-1].split('.txt')[0] + FLAGS.img_format
-        img_path = image_path + '/' + img_name
+        writer = tf.python_io.TFRecordWriter(path=save_path)
 
-        if not os.path.exists(img_path):
-            print('{} is not exist!'.format(img_path))
-            continue
-        ships = simpletxt_parse(xml,space=' ',boxType='points')
-        gtboxes_and_label=[]
-        print(len(ships))
-        for ship in ships:
-            gtbox_label=[0,0,0,0,0,0,0,0,1]
-            gtbox_label[:8]=ship['points']
-            gtboxes_and_label.append(gtbox_label)
-        img_height, img_width=1024,1024
-        gtboxes_and_label=np.array(gtboxes_and_label, dtype=np.int32)
-        # if img_height != 600 or img_width != 600:
-        #     continue
+        txtFullPathList,_ = get_files(label_Path,_ends=['*.txt'])
+        for count, txt in enumerate(txtFullPathList):
+            (txtPath,tmpTxtName) = os.path.split(txt)
+            (txt_name,extension) = os.path.splitext(tmpTxtName)
 
-        img = cv2.imread(img_path)[:, :, ::-1]
-        cur_h,cur_w = img.shape[0],img.shape[1]
-        if 1024>cur_h or 1024>cur_w:
-            img = cv2.copyMakeBorder(img,0,1024-cur_h,0,1024-cur_w,cv2.BORDER_CONSTANT,value=0)
-        img=np.array(img, dtype=np.int32)
-        img_raw = img.tobytes()
-        num_objects = gtboxes_and_label.shape[0]
-        # shape = gtboxes_and_label.shape
-        # gtboxes_and_label=gtboxes_and_label.tobytes()
-        feature = tf.train.Features(feature={
-            # do not need encode() in linux
-            'img_name': _bytes_feature(img_name.encode()),
-            # 'img_name': _bytes_feature(img_name),
-            'img_height': _int64_feature(img_height),
-            'img_width': _int64_feature(img_width),
-            'img': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw])),
-            'num_objects':tf.train.Feature(int64_list=tf.train.Int64List(value=[num_objects])),
-            'gtboxes_and_label': _bytes_feature(gtboxes_and_label.tostring())
-        })
-        example = tf.train.Example(features=feature)
-        # img_raw = img.tobytes()
-        # label = gtboxes_and_label.shape[0]
-        # shape = gtboxes_and_label.shape
-        # # gtboxes_and_label=gtboxes_and_label.tobytes()
-        # example = tf.train.Example(features=tf.train.Features(feature={
-        #         'img_raw': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw])),
-        #         'img_name': _bytes_feature(img_name.encode()),
-        #         'img_width': _int64_feature(img_width),
-        #         'label': tf.train.Feature(int64_list=tf.train.Int64List(value=[label])),
-        #         'gtboxes_and_label':_bytes_feature(gtboxes_and_label.tostring())
-        #         }))
+            img_name = txt_name + FLAGS.img_format
+            img_path = image_path + '/' + img_name
 
-        writer.write(example.SerializeToString())
+            if not os.path.exists(img_path):
+                print('{} is not exist!'.format(img_path))
+                continue
+            ships = simpletxt_parse(txt,space=' ',boxType='points')
+            gtboxes_and_label=[]
+            for ship in ships:
+                gtbox_label=[0,0,0,0,0,0,0,0,1]
+                gtbox_label[:8]=ship['points']
+                gtboxes_and_label.append(gtbox_label)
+            img_height, img_width=1024,1024
+            gtboxes_and_label=np.array(gtboxes_and_label, dtype=np.int32)
 
-        # view_bar('Conversion progress', count + 1, len(glob.glob(xml_path + '/*.xml')))
+            img = cv2.imread(img_path)[:, :, ::-1]
+            cur_h,cur_w = img.shape[0],img.shape[1]
+            if 1024>cur_h or 1024>cur_w:
+                img = cv2.copyMakeBorder(img,0,1024-cur_h,0,1024-cur_w,cv2.BORDER_CONSTANT,value=0)
+            img=np.array(img, dtype=np.int32)
+            img_raw = img.tobytes()
+            num_objects = gtboxes_and_label.shape[0]
+            # shape = gtboxes_and_label.shape
+            # gtboxes_and_label=gtboxes_and_label.tobytes()
+            feature = tf.train.Features(feature={
+                # do not need encode() in linux
+                'img_name': _bytes_feature(img_name.encode()),
+                # 'img_name': _bytes_feature(img_name),
+                'img_height': _int64_feature(img_height),
+                'img_width': _int64_feature(img_width),
+                'img': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw])),
+                'num_objects':tf.train.Feature(int64_list=tf.train.Int64List(value=[num_objects])),
+                'gtboxes_and_label': _bytes_feature(gtboxes_and_label.tostring())
+            })
+            example = tf.train.Example(features=feature)
 
-    print('\nConversion is complete!')
-    writer.close()
+            writer.write(example.SerializeToString())
+
+        print('Conversion is complete!save path:{}'.format(train_or_test,save_path))
+        writer.close()
 
 
 if __name__ == '__main__':

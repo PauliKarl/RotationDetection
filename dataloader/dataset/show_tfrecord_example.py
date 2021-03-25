@@ -1,57 +1,3 @@
-# #使用tf_record_iterator来遍历每一个example
-# import tensorflow as tf
-# import numpy as np
-
-# # 'img_name': _bytes_feature(img_name.encode()),
-# # # 'img_name': _bytes_feature(img_name),
-# # 'img_height': _int64_feature(img_height),
-# # 'img_width': _int64_feature(img_width),
-# # 'img': _bytes_feature(img.tostring()),
-# # 'gtboxes_and_label': _bytes_feature(gtboxes_and_label.tostring()),
-# # 'num_objects': _int64_feature(gtboxes_and_label.shape[0])
-# train_record = 'F:/PauliKarl/tfrecord/DOTA2.0_train.tfrecord'
-
-# with tf.Session() as sess:
-#     example = tf.train.Example()
-
-#     #train_record表示训练的tfrecords文件的路径
-#     record_iterator = tf.python_io.tf_record_iterator(path=train_record)
-#     for record in record_iterator:
-#         example.ParseFromString(record)
-#         f = example.features.feature
-
-#         pattern = 'F:/PauliKarl/tfrecord/DOTA2.0_train.tfrecord'
-
-#         filename_tensorlist = tf.train.match_filenames_once(pattern)
-
-#         filename_queue = tf.train.string_input_producer(filename_tensorlist)
-#         reader = tf.TFRecordReader()
-#         _, serialized_example = reader.read(filename_queue)
-
-#         features = tf.parse_single_example(
-#             serialized=serialized_example,
-#             features={
-#                 'img_name': tf.FixedLenFeature([], tf.string),
-#                 'img_height': tf.FixedLenFeature([], tf.int64),
-#                 'img_width': tf.FixedLenFeature([], tf.int64),
-#                 'img': tf.FixedLenFeature([], tf.string),
-#                 'gtboxes_and_label': tf.FixedLenFeature([], tf.string),
-#                 'num_objects': tf.FixedLenFeature([], tf.int64)
-#             }
-#         )
-#         img_name = features['img_name']
-#         img_height = tf.cast(features['img_height'], tf.int32)
-#         img_width = tf.cast(features['img_width'], tf.int32)
-#         img = tf.decode_raw(features['img'], tf.uint8)
-
-#         img = tf.reshape(img, shape=[img_height, img_width, 3])
-
-#         gtboxes_and_label = tf.decode_raw(features['gtboxes_and_label'], tf.int32)
-#         gtboxes_and_label = tf.reshape(gtboxes_and_label, [-1, 9])
-
-#         num_objects = tf.cast(features['num_objects'], tf.int32)
-
-
 import os
 import tensorflow as tf
 import cv2
@@ -161,7 +107,7 @@ def read_and_decode(filename):
     return img,img_name,img_height,img_width,gtboxes_and_label,num_objects
     
 #读取TFRecord格式格式文件，返回读取到的一张图像以及对应的标签
-pattern = 'F:/PauliKarl/tfrecord/DOTA2.0_train.tfrecord'
+pattern = '/data2/pd/sdc/shipdet/tfrecord/sdc_trainval.tfrecord'
 
 img,img_name,img_height,img_width,gtboxes_and_label,num_objects= read_and_decode(pattern)  
 
@@ -203,7 +149,7 @@ with tf.Session() as sess:
             img1,img_name1,img_height1,img_width1,gtboxes_and_label1,num_objects1 = sess.run([img,img_name,img_height,img_width,gtboxes_and_label,num_objects])  
             for i in range(batch_size):
 
-                print(img1,img_name1,img_height1,img_width1,gtboxes_and_label1,num_objects1)
+                print(img_name1,img_height1,img_width1,gtboxes_and_label1,num_objects1)
             
     #终止线程
     except tf.errors.OutOfRangeError:
