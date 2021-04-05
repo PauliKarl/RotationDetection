@@ -12,17 +12,19 @@ from pktool import rovoc_parse, thetaobb2pointobb, mkdir_or_exist,simpletxt_pars
 
 sys.path.append('../../')
 
-# from libs.label_name_dict.label_dict import LabelMap
+from libs.label_name_dict.label_dict import LabelMap
 # from utils.tools import makedirs, view_bar
-# from libs.configs import cfgs
+from libs.configs import cfgs
+# 'sdc','sdc-multidet'
+dataset_Name = 'sdc-multidet'
+cfgs.DATASET_NAME = dataset_Name
 
-tf.app.flags.DEFINE_string('VOC_dir', '/data/pd/shipdet/v1/', 'Voc dir')
+tf.app.flags.DEFINE_string('VOC_dir', '/data2/pd/sdc/multidet/v0/', 'Voc dir')
 tf.app.flags.DEFINE_string('txt_dir', 'labels', 'xml dir')
 tf.app.flags.DEFINE_string('image_dir', 'images', 'image dir')
-# tf.app.flags.DEFINE_string('save_name', 'test', 'save name')
-tf.app.flags.DEFINE_string('save_dir', '/data2/pd/sdc/shipdet/tfrecord/', 'save name')
+tf.app.flags.DEFINE_string('save_dir', '/data2/pd/sdc/multidet/v0/tfrecord/', 'save name')
 tf.app.flags.DEFINE_string('img_format', '.png', 'format of image')
-tf.app.flags.DEFINE_string('dataset', 'sdc', 'dataset')
+tf.app.flags.DEFINE_string('dataset', dataset_Name, 'dataset')
 FLAGS = tf.app.flags.FLAGS
 
 def int64_feature(values):
@@ -115,18 +117,18 @@ def convert_pascal_to_tfrecord():
                 print('{} is not exist!'.format(img_path))
                 continue
             ships = simpletxt_parse(txt,space=' ',boxType='points')
+            label_map = LabelMap(cfgs)
+            # print(label_map.name2label())
             gtboxes_and_label=[]
             for ship in ships:
-                gtbox_label=[0,0,0,0,0,0,0,0,1]
+                gtbox_label=[0,0,0,0,0,0,0,0,0]
                 gtbox_label[:8]=ship['points']
+                gtbox_label[8] = label_map.name2label()[ship['label']]
                 gtboxes_and_label.append(gtbox_label)
             img_height, img_width=1024,1024
             gtboxes_and_label=np.array(gtboxes_and_label, dtype=np.int32)
 
             img = cv2.imread(img_path)[:, :, ::-1]
-            cur_h,cur_w = img.shape[0],img.shape[1]
-            if 1024>cur_h or 1024>cur_w:
-                img = cv2.copyMakeBorder(img,0,1024-cur_h,0,1024-cur_w,cv2.BORDER_CONSTANT,value=0)
             img=np.array(img, dtype=np.int32)
             img_raw = img.tobytes()
             num_objects = gtboxes_and_label.shape[0]
@@ -151,7 +153,5 @@ def convert_pascal_to_tfrecord():
 
 
 if __name__ == '__main__':
-    # xml_path = '../data/dataset/VOCdevkit/VOC2007/Annotations/000005.xml'
-    # read_xml_gtbox_and_label(xml_path)
 
     convert_pascal_to_tfrecord()

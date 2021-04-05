@@ -47,7 +47,9 @@ class TrainR3Det(Train):
                     shortside_len = cfgs.IMG_SHORT_SIDE_LEN
 
                 img_name_batch, img_batch, gtboxes_and_label_batch, num_objects_batch, img_h_batch, img_w_batch = \
-                    self.reader.next_batch(dataset_name=cfgs.DATASET_NAME,
+                    self.reader.next_batch(SDC_TYPE=cfgs.SDC_TYPE,
+                                           DATASET_VERSION=cfgs.DATASET_VERSION,
+                                           dataset_name=cfgs.DATASET_NAME,
                                            batch_size=cfgs.BATCH_SIZE * num_gpu,
                                            shortside_len=shortside_len,
                                            is_training=True)

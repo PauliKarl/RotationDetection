@@ -11,7 +11,7 @@ sys.path.append('../../')
 
 from dataloader.dataset.image_augmentation import ImageAugmentation
 from dataloader.pretrained_weights.pretrain_zoo import PretrainModelZoo
-
+from libs.configs import cfgs
 
 class ReadTFRecord(object):
 
@@ -91,7 +91,7 @@ class ReadTFRecord(object):
             img = img - tf.constant([[self.cfgs.PIXEL_MEAN]])  # sub pixel mean at last
         return img_name, img, gtboxes_and_label, num_objects, img_h, img_w
 
-    def next_batch(self, dataset_name, batch_size, shortside_len, is_training):
+    def next_batch(self, SDC_TYPE=cfgs.SDC_TYPE,DATASET_VERSION=cfgs.DATASET_VERSION,dataset_name, batch_size, shortside_len, is_training):
         '''
         :return:
         img_name_batch: shape(1, 1)
@@ -102,15 +102,15 @@ class ReadTFRecord(object):
 
         valid_dataset= ['DOTA1.5', 'ICDAR2015', 'pascal', 'coco', 'bdd100k', 'DOTA', 'DOTA800', 'DOTA600', 'MLT',
                         'HRSC2016', 'UCAS-AOD', 'OHD-SJTU', 'OHD-SJTU-600', 'OHD-SJTU-ALL-600', 'DOTATrain', 'SSDD++',
-                        'SKU110K-R', 'SKU110K', 'MSRA-TD500', 'DOTA2.0','sdc']
+                        'SKU110K-R', 'SKU110K', 'MSRA-TD500', 'DOTA2.0','sdc','sdc-multidet']
         if dataset_name not in valid_dataset:
             raise ValueError('dataSet name must be in {}'.format(valid_dataset))
 
         if is_training:
-            pattern = '/data2/pd/sdc/shipdet/tfrecord/{}_trainval.tfrecord'.format(dataset_name)
+            pattern = '/data2/pd/sdc/{}/{}/tfrecord/{}_trainval.tfrecord'.format(SDC_TYPE,DATASET_VERSION,dataset_name)
             # pattern = os.path.join('F:/PauliKarl/tfrecord', dataset_name + ('_train*' if 'MLT' not in dataset_name else '_*'))
         else:
-            pattern = '/data2/pd/sdc/shipdet/tfrecord/{}_test.tfrecord'.format(dataset_name)
+            pattern = '/data2/pd/sdc/{}/{}/tfrecord/{}_test.tfrecord'.format(SDC_TYPE,DATASET_VERSION,dataset_name)
             # pattern = os.path.join('../../dataloader/tfrecord', dataset_name + '_test*')
 
         # print('tfrecord path is -->', os.path.abspath(pattern))
@@ -138,12 +138,18 @@ class ReadTFRecord(object):
 
 
 if __name__ == '__main__':
-    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+    
     from libs.configs import cfgs
+    
+    os.environ["CUDA_VISIBLE_DEVICES"] = cfgs.GPU_GROUP
     reader = ReadTFRecord(cfgs)
+    SDC_TYPE,DATASET_VERSION=cfgs.SDC_TYPE,cfgs.DATASET_VERSION
+    
     num_gpu = len(cfgs.GPU_GROUP.strip().split(','))
     img_name_batch, img_batch, gtboxes_and_label_batch, num_objects_batch, img_h_batch, img_w_batch = \
-        reader.next_batch(dataset_name=cfgs.DATASET_NAME,  # 'pascal', 'coco'
+        reader.next_batch(SDC_TYPE=cfgs.SDC_TYPE,
+                          DATASET_VERSION=cfgs.DATASET_VERSION,
+                          dataset_name=cfgs.DATASET_NAME, 
                           batch_size=cfgs.BATCH_SIZE * 8,
                           shortside_len=cfgs.IMG_SHORT_SIDE_LEN,
                           is_training=True)

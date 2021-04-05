@@ -2,25 +2,25 @@
 from __future__ import division, print_function, absolute_import
 
 
-# class_names = [
-#         'back_ground', 'person', 'bicycle', 'car', 'motorcycle',
-#         'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
-#         'fire hydrant', 'stop sign', 'parking meter', 'bench',
-#         'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant',
-#         'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-#         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-#         'sports ball', 'kite', 'baseball bat', 'baseball glove',
-#         'skateboard', 'surfboard', 'tennis racket', 'bottle',
-#         'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
-#         'banana', 'apple', 'sandwich', 'orange', 'broccoli',
-#         'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-#         'couch', 'potted plant', 'bed', 'dining table', 'toilet',
-#         'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
-#         'microwave', 'oven', 'toaster', 'sink', 'refrigerator',
-#         'book', 'clock', 'vase', 'scissors', 'teddy bear',
-#         'hair drier', 'toothbrush']
+class_names = [
+        'back_ground', 'person', 'bicycle', 'car', 'motorcycle',
+        'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+        'fire hydrant', 'stop sign', 'parking meter', 'bench',
+        'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant',
+        'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
+        'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+        'sports ball', 'kite', 'baseball bat', 'baseball glove',
+        'skateboard', 'surfboard', 'tennis racket', 'bottle',
+        'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
+        'banana', 'apple', 'sandwich', 'orange', 'broccoli',
+        'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
+        'couch', 'potted plant', 'bed', 'dining table', 'toilet',
+        'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
+        'microwave', 'oven', 'toaster', 'sink', 'refrigerator',
+        'book', 'clock', 'vase', 'scissors', 'teddy bear',
+        'hair drier', 'toothbrush']
 
-class_names = ['ship']
+# class_names = ['ship']
 
 classes_originID = {
     'person': 1, 'bicycle': 2, 'car': 3, 'motorcycle': 4,
@@ -187,6 +187,26 @@ class LabelMap(object):
             name_label_map = {
                 'back_ground':0,
                 'ship':1
+            }
+        elif self.cfgs.DATASET_NAME == 'sdc-multidet':
+            name_label_map = {
+                'back_ground':0,
+                'Cargo vessel':1,
+                'Ship':2,
+                'Motorboat':3,
+                'Fishing boat':4,
+                'Destroyer':5,
+                'Tugboat':6,
+                'Loose pulley':7,
+                'Warship':8,
+                'Engineering ship':9,
+                'Amphibious ship':10,
+                'Cruiser':11,
+                'Frigate':12,
+                'Submarine':13,
+                'Aircraft carrier':14,
+                'Command ship':15,
+                'Hovercraft':16
             }
         else:
             name_label_map = {}

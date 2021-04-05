@@ -30,10 +30,10 @@ def parse_args():
 
     parser.add_argument('--test_dir', dest='test_dir',
                         help='evaluate imgs dir ',
-                        default='/data/DOTA/test/images/', type=str)
+                        default='/data2/pd/sdc/shipdet/v1/test/images/', type=str)
     parser.add_argument('--gpus', dest='gpus',
                         help='gpu id',
-                        default='0,1,2,3,4,5,6,7', type=str)
+                        default='1', type=str)
     parser.add_argument('--eval_num', dest='eval_num',
                         help='the num of eval imgs',
                         default=np.inf, type=int)
@@ -48,10 +48,10 @@ def parse_args():
                         default=np.inf, type=int)
     parser.add_argument('--h_len', dest='h_len',
                         help='image height',
-                        default=600, type=int)
+                        default=1024, type=int)
     parser.add_argument('--w_len', dest='w_len',
                         help='image width',
-                        default=600, type=int)
+                        default=1024, type=int)
     parser.add_argument('--h_overlap', dest='h_overlap',
                         help='height overlap',
                         default=150, type=int)
@@ -333,7 +333,7 @@ class TestDOTA(object):
 
     def test_dota(self, det_net, real_test_img_list, txt_name):
 
-        save_path = os.path.join('./test_dota', self.cfgs.VERSION)
+        save_path = os.path.join('/data2/pd/sdc/shipdet/v1/works_dir/rodet/test_dota', self.cfgs.VERSION)
 
         nr_records = len(real_test_img_list)
         pbar = tqdm(total=nr_records)
