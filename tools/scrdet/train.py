@@ -51,7 +51,9 @@ class TrainSCRDet(Train):
                     self.reader.next_batch(dataset_name=cfgs.DATASET_NAME,
                                            batch_size=cfgs.BATCH_SIZE * num_gpu,
                                            shortside_len=shortside_len,
-                                           is_training=True)
+                                           is_training=True,
+                                           SDC_TYPE=cfgs.SDC_TYPE,
+                                           DATASET_VERSION=cfgs.DATASET_VERSION)
 
             # data processing
             inputs_list = []

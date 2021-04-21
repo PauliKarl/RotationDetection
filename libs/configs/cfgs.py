@@ -7,68 +7,58 @@ import math
 from dataloader.pretrained_weights.pretrain_zoo import PretrainModelZoo
 
 """
+SCRDet
+FLOPs: 1126555840;    Trainable params: 43227534
+
 This is your result for task 1:
 
-    mAP: 0.7066194189913816
-    ap of each class:
-    plane:0.8905480010393588,
-    baseball-diamond:0.7845764249543027,
-    bridge:0.4415489914209597,
-    ground-track-field:0.6515721505439082,
-    small-vehicle:0.7509226622459368,
-    large-vehicle:0.7288453788151275,
-    ship:0.8604046905135039,
-    tennis-court:0.9082569687774237,
-    basketball-court:0.8141347275878138,
-    storage-tank:0.8253027715641935,
-    soccer-ball-field:0.5623560181901192,
-    roundabout:0.6100656068973895,
-    harbor:0.5648618127447264,
-    swimming-pool:0.6767393616949172,
-    helicopter:0.5291557178810407
-
+mAP: 0.7017537811932414
+ap of each class: plane:0.8911387826735638, baseball-diamond:0.775529003353518, bridge:0.4509789898495809, ground-track-field:0.6496553432174655, small-vehicle:0.753619348187285, large-vehicle:0.7440730940099484, ship:0.8512441917843704, tennis-court:0.898862230577996, basketball-court:0.8331792736551014, storage-tank:0.8204919677785293, soccer-ball-field:0.42899647699961085, roundabout:0.6034139167456652, harbor:0.6458833428224676, swimming-pool:0.6753589974983456, helicopter:0.5038817587451719
 The submitted information is :
 
-Description: RetinaNet_DOTA_R3Det_2x_20191108_70.2w
+Description: FPN_Res50D_DOTA_1x_20201103_37.8w_r
 Username: SJTU-Det
 Institute: SJTU
 Emailadress: yangxue-2019-sjtu@sjtu.edu.cn
 TeamMembers: yangxue
 
+This is your evaluation result for task 2:
 
+mAP: 0.7172708030045355
+ap of each class: plane:0.8948601687941339, baseball-diamond:0.7983222545157133, bridge:0.5043454171429804, ground-track-field:0.6251083846010812, small-vehicle:0.7672174612590384, large-vehicle:0.7431535330369287, ship:0.8542223630049876, tennis-court:0.9086082885400426, basketball-court:0.8419754132368138, storage-tank:0.825103739540167, soccer-ball-field:0.4284043211050202, roundabout:0.601584793813972, harbor:0.7417571712916949, swimming-pool:0.7062648105990572, helicopter:0.5181339245864024
+The submitted information is :
+
+Description: FPN_Res50D_DOTA_1x_20201103_37.8w_h
+Username: SJTU-Det
+Institute: SJTU
+Emailadress: yangxue-2019-sjtu@sjtu.edu.cn
+TeamMembers: yangxue
 """
-DATASET_VERSION = 'v1'
-SDC_TYPE = 'shipdet'
-CLASSES_NUM =1
+# DATASET_VERSION = 'v1'
+# SDC_TYPE = 'shipdet'
+# CLASSES_NUM =1
 ###load datset sdc-multidet
-# DATASET_VERSION = 'v0'
-# SDC_TYPE = 'multidet'
-# CLASSES_NUM =16
+DATASET_VERSION = 'v0'
+SDC_TYPE = 'multidet'
+CLASSES_NUM =16
 # ------------------------------------------------
-VERSION = 'FPN_Res50_r3det_1x_20210405'
+VERSION = 'FPN_Res50_scr_multidet_1x_20210413'
 NET_NAME = 'resnet_v1_50'
 
 # ---------------------------------------- System
-# ROOT_PATH = os.path.abspath('../../')
-# print(20*"++--")
-# print(ROOT_PATH)
-# GPU_GROUP = "0,1,2"
-# NUM_GPU = len(GPU_GROUP.strip().split(','))
-# SHOW_TRAIN_INFO_INTE = 20
-# SMRY_ITER = 200
-# SAVE_WEIGHTS_INTE = 27000 * 2
 ROOT_PATH=os.path.abspath('../../')
-work_PATH = '/data2/pd/sdc/shipdet/v1/works_dir/rodet/'
+work_PATH = '/data2/pd/sdc/multidet/v0/works_dir/rodet/'
 print(20*"++--")
 print(ROOT_PATH)
 print(work_PATH)
-GPU_GROUP = '1'
+GPU_GROUP = '0'
 NUM_GPU = len(GPU_GROUP.strip().split(','))
-SHOW_TRAIN_INFO_INTE = 20
+SHOW_TRAIN_INFO_INTE = 50
 SMRY_ITER = 200
-SAVE_WEIGHTS_INTE = 3500*2 ##6886/BATCH_SIZE
-
-
+# SAVE_WEIGHTS_INTE = 3500 
+# ##6886/BATCH_SIZE
+SAVE_WEIGHTS_INTE = 1600
+##3156/BATCH_SIZE
 
 SUMMARY_PATH = os.path.join(work_PATH, 'output/summary')
 TEST_SAVE_PATH = os.path.join(work_PATH, 'tools/test_result')
@@ -78,33 +68,40 @@ PRETRAINED_CKPT = pretrain_zoo.pretrain_weight_path(NET_NAME, ROOT_PATH)
 TRAINED_CKPT = os.path.join(work_PATH, 'output/trained_weights')
 EVALUATE_R_DIR = os.path.join(work_PATH, 'output/evaluate_result_pickle/')
 
-# ------------------------------------------ Train and test
+# ------------------------------------------ Train an test
 RESTORE_FROM_RPN = False
-FIXED_BLOCKS = 1  # allow 0~3
-FREEZE_BLOCKS = [True, False, False, False, False]  # for gluoncv backbone
+IS_FILTER_OUTSIDE_BOXES = False
+FREEZE_BLOCKS = [True, True, False, False, True]  # for gluoncv backbone
+FIXED_BLOCKS = 0  # allow 0~3
 USE_07_METRIC = True
+CUDA8 = False
 ADD_BOX_IN_TENSORBOARD = True
+
+RPN_LOCATION_LOSS_WEIGHT = 1.
+RPN_CLASSIFICATION_LOSS_WEIGHT = 1.0
+FAST_RCNN_LOCATION_LOSS_WEIGHT = 1.0
+FAST_RCNN_CLASSIFICATION_LOSS_WEIGHT = 1.0
+RPN_SIGMA = 3.0
+FASTRCNN_SIGMA = 1.0
+USE_IOU_FACTOR = False
 
 MUTILPY_BIAS_GRADIENT = 2.0  # if None, will not multipy
 GRADIENT_CLIPPING_BY_NORM = 10.0  # if None, will not clip
 
-CLS_WEIGHT = 1.0
-REG_WEIGHT = 1.0
-USE_IOU_FACTOR = False
-
-BATCH_SIZE = 1
+BATCH_SIZE = 2
 EPSILON = 1e-5
 MOMENTUM = 0.9
-LR = 5e-4
+LR = 0.001 * BATCH_SIZE * NUM_GPU
 DECAY_STEP = [SAVE_WEIGHTS_INTE*12, SAVE_WEIGHTS_INTE*16, SAVE_WEIGHTS_INTE*20]
 MAX_ITERATION = SAVE_WEIGHTS_INTE*20
 WARM_SETP = int(1.0 / 4.0 * SAVE_WEIGHTS_INTE)
 
 # -------------------------------------------- Dataset
-DATASET_NAME = 'sdc'
+# DATASET_NAME = 'sdc'
+DATASET_NAME = 'sdc-multidet'
 PIXEL_MEAN = [123.68, 116.779, 103.939]  # R, G, B. In tf, channel is RGB. In openCV, channel is BGR
 PIXEL_MEAN_ = [0.485, 0.456, 0.406]
-PIXEL_STD = [0.229, 0.224, 0.225]  # R, G, B. In tf, channel is RGB. In openCV, channel is BGR
+PIXEL_STD = [0.229, 0.224, 0.225]
 IMG_SHORT_SIDE_LEN = 1024
 IMG_MAX_LENGTH = 1024
 CLASS_NUM = CLASSES_NUM
@@ -116,42 +113,56 @@ HORIZONTAL_FLIP = True
 IMAGE_PYRAMID = False
 
 # --------------------------------------------- Network
-SUBNETS_WEIGHTS_INITIALIZER = tf.random_normal_initializer(mean=0.0, stddev=0.01, seed=None)
-SUBNETS_BIAS_INITIALIZER = tf.constant_initializer(value=0.0)
-PROBABILITY = 0.01
-FINAL_CONV_BIAS_INITIALIZER = tf.constant_initializer(value=-math.log((1.0 - PROBABILITY) / PROBABILITY))
-WEIGHT_DECAY = 1e-4
-USE_GN = False
-NUM_SUBNET_CONV = 4
-NUM_REFINE_STAGE = 1
-USE_RELU = False
-FPN_CHANNEL = 256
-FPN_MODE = 'fpn'
+INITIALIZER = tf.random_normal_initializer(mean=0.0, stddev=0.01)
+BBOX_INITIALIZER = tf.random_normal_initializer(mean=0.0, stddev=0.001)
+WEIGHT_DECAY = 0.00004 if NET_NAME.startswith('Mobilenet') else 0.0001
+ADD_GLOBAL_CTX = False
+SHARE_HEADS = True
+FPN_CHANNEL = 512
 
 # --------------------------------------------- Anchor
-LEVEL = ['P3', 'P4', 'P5', 'P6', 'P7']
-BASE_ANCHOR_SIZE_LIST = [32, 64, 128, 256, 512]
-ANCHOR_STRIDE = [8, 16, 32, 64, 128]
-ANCHOR_SCALES = [2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)]
-ANCHOR_RATIOS = [1, 1 / 2, 2., 1 / 3., 3., 5., 1 / 5.]
-ANCHOR_ANGLES = [-90, -75, -60, -45, -30, -15]
+USE_CENTER_OFFSET = False
+BASE_ANCHOR_SIZE_LIST = 256
+ANCHOR_STRIDE = 8
+ANCHOR_SCALES = [0.0625, 0.125, 0.25, 0.5, 1., 2.0]
+ANCHOR_RATIOS = [0.5, 1., 2.0, 1/4.0, 4.0, 1/6.0, 6.0]
+ROI_SCALE_FACTORS = [10., 10., 5.0, 5.0, 10.0]
 ANCHOR_SCALE_FACTORS = None
-USE_CENTER_OFFSET = True
-METHOD = 'R'
-USE_ANGLE_COND = False
+ANCHOR_MODE = 'H'
 ANGLE_RANGE = 90
 
-# -------------------------------------------- Head
-SHARE_NET = True
-USE_P5 = True
-IOU_POSITIVE_THRESHOLD = 0.5
-IOU_NEGATIVE_THRESHOLD = 0.4
-REFINE_IOU_POSITIVE_THRESHOLD = [0.6, 0.7]
-REFINE_IOU_NEGATIVE_THRESHOLD = [0.5, 0.6]
 
-NMS = True
-NMS_IOU_THRESHOLD = 0.1
-MAXIMUM_DETECTIONS = 100
+# -------------------------------------------- RPN
+FPN_MODE = 'scrdet'
+KERNEL_SIZE = 3
+RPN_IOU_POSITIVE_THRESHOLD = 0.7
+RPN_IOU_NEGATIVE_THRESHOLD = 0.3
+TRAIN_RPN_CLOOBER_POSITIVES = False
+
+RPN_MINIBATCH_SIZE = 512  # 256
+RPN_POSITIVE_RATE = 0.5
+RPN_NMS_IOU_THRESHOLD = 0.7  # 0.7
+RPN_TOP_K_NMS_TRAIN = 12000
+RPN_MAXIMUM_PROPOSAL_TARIN = 2000
+
+RPN_TOP_K_NMS_TEST = 6000
+RPN_MAXIMUM_PROPOSAL_TEST = 1000
+
+# ------------------------------------------- Fast-RCNN
+ROI_SIZE = 14
+ROI_POOL_KERNEL_SIZE = 2
+USE_DROPOUT = False
+KEEP_PROB = 1.0
+VIS_SCORE = 0.6  # only show in tensorboard
 FILTERED_SCORE = 0.05
-VIS_SCORE = 0.4
 
+SOFT_NMS = False
+FAST_RCNN_H_NMS_IOU_THRESHOLD = 0.3
+FAST_RCNN_R_NMS_IOU_THRESHOLD = 0.2
+FAST_RCNN_NMS_MAX_BOXES_PER_CLASS = 200
+FAST_RCNN_IOU_POSITIVE_THRESHOLD = 0.5
+FAST_RCNN_IOU_NEGATIVE_THRESHOLD = 0.0   # 0.1 < IOU < 0.5 is negative
+FAST_RCNN_MINIBATCH_SIZE = 512
+FAST_RCNN_POSITIVE_RATE = 0.25
+ADD_GTBOXES_TO_TRAIN = False
+ROTATE_NMS_USE_GPU = True

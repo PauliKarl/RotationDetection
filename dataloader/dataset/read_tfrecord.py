@@ -91,7 +91,7 @@ class ReadTFRecord(object):
             img = img - tf.constant([[self.cfgs.PIXEL_MEAN]])  # sub pixel mean at last
         return img_name, img, gtboxes_and_label, num_objects, img_h, img_w
 
-    def next_batch(self, SDC_TYPE=cfgs.SDC_TYPE,DATASET_VERSION=cfgs.DATASET_VERSION,dataset_name, batch_size, shortside_len, is_training):
+    def next_batch(self,dataset_name, batch_size, shortside_len, is_training, SDC_TYPE=None,DATASET_VERSION=None):
         '''
         :return:
         img_name_batch: shape(1, 1)

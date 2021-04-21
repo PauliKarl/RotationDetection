@@ -205,8 +205,8 @@ class LabelMap(object):
                 'Frigate':12,
                 'Submarine':13,
                 'Aircraft carrier':14,
-                'Command ship':15,
-                'Hovercraft':16
+                'Hovercraft':15,
+                'Command ship':16
             }
         else:
             name_label_map = {}

@@ -37,9 +37,11 @@ Institute: SJTU
 Emailadress: yangxue-2019-sjtu@sjtu.edu.cn
 TeamMembers: yangxue
 """
-
+DATASET_VERSION = 'v1'
+SDC_TYPE = 'shipdet'
+CLASSES_NUM =1
 # ------------------------------------------------
-VERSION = 'FPN_Res50_sdc_1x_20210403'
+VERSION = 'FPN_Res50_r2cnn_1x_20210407'
 NET_NAME = 'resnet_v1_50'
 
 # ---------------------------------------- System

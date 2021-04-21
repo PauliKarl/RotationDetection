@@ -256,7 +256,7 @@ class TestDOTA(object):
 
     def test_dota(self, det_net, real_test_img_list, txt_name):
 
-        save_path = os.path.join('./test_dota', self.cfgs.VERSION)
+        save_path = os.path.join('/data2/pd/sdc/shipdet/v1/works_dir/rodet/test_dota', self.cfgs.VERSION)
 
         nr_records = len(real_test_img_list)
         pbar = tqdm(total=nr_records)
